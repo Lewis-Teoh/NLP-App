@@ -1,2 +1,6 @@
 # ignore git push file
 .idea
+
+# ignore csv, excels file
+.xlsx
+.csv
