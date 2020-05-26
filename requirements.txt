@@ -2,3 +2,5 @@ spacy==2.2.4
 pandas==1.0.3
 jupyter==1.0.0
 matplotlib==3.0.3
+Keras==2.3.1
+scikit-learn==0.23.1
