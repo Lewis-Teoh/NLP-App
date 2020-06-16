@@ -4,3 +4,6 @@ jupyter==1.0.0
 matplotlib==3.0.3
 Keras==2.3.1
 scikit-learn==0.23.1
+Flask==1.1.2
+Flask-RESTful==0.3.8
+flask-cors
