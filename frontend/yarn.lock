@@ -12061,11 +12061,6 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-rating-stars-component@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-rating-stars-component/-/react-rating-stars-component-1.1.0.tgz#1b6f0ebced803b08a6308ece31ec44409bece222"
-  integrity sha512-wNUepUOlyb9mi/2Xob9vx8PT7TazVLEGi/OBfMSjA9dDUHDMD+3uvLv/b+D1xVr08iKReZRjk36sYSfVM8hHZw==
-
 react-reconciler@^0.24.0:
   version "0.24.0"
   resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.24.0.tgz#5a396b2c2f5efe8554134a5935f49f546723f2dd"
