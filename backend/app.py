@@ -5,8 +5,8 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-from tensorflow.keras.preprocessing.text import Tokenizer as KerasTokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tf.keras.preprocessing.text import Tokenizer as KerasTokenizer
+from tf.keras.preprocessing.sequence import pad_sequences
 
 from sentence_parser import Parser
 
@@ -55,7 +55,7 @@ class Review(db.Model):
 @app.route('/add_review', methods=['POST'])
 def add_review():
     review_data = request.get_json()
-    print(type(review_data['review']))
+    
     try:
         label = analyzerWrapper(review_data['review'])
     except Exception as e:
