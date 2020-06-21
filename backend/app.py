@@ -1,5 +1,5 @@
 import datetime
-import numpy as np
+# import numpy as np
 # import tensorflow as tf
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
