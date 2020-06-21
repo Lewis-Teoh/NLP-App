@@ -5,8 +5,8 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-from tf.keras.preprocessing.text import Tokenizer as KerasTokenizer
-from tf.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import Tokenizer as KerasTokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 from sentence_parser import Parser
 
@@ -76,7 +76,7 @@ def reviews():
     reviews = []
 
     for review in review_list:
-        reviews.append({'rating': review.rating, 'review': review.review})
+        reviews.append({'rating': review.rating, 'review': review.review, 'model_sentiment': review.model_sentiment})
 
     return jsonify({'reviews': reviews})
 
