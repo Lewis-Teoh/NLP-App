@@ -33,6 +33,7 @@ const IndexPage = () => {
   const [reviews, updateReviews] = useState([])
   const [overallRate, setOverallRate] = useState(0.0)
   const [loading, setLoading] = useState(true)
+  const [update, triggerUpdate] = useState(0)
   const [sentiments, updateSentiments] = useState({
     posCount: 0,
     negCount: 0,
@@ -59,6 +60,7 @@ const IndexPage = () => {
           updateReviews(prev => [...prev, values])
           resetForm()
           setLoading(false)
+          triggerUpdate(prev => prev + 1)
         })
         .catch(err => {
           console.error(err)
@@ -73,7 +75,6 @@ const IndexPage = () => {
         updateReviews(response.data.reviews)
         calcOverallRate(response.data.reviews)
         setLoading(false)
-        console.log(response.data.reviews)
       })
       .catch(err => {
         console.error(err)
@@ -119,7 +120,7 @@ const IndexPage = () => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [update])
 
   return (
     <Layout>
