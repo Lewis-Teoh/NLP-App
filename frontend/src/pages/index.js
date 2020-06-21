@@ -180,7 +180,7 @@ const IndexPage = () => {
                   </Grid>
                   <Grid item justify="flex-end">
                     <Typography>
-                      {(sentiments.posCount * 1.0 / (sentiments.posCount + sentiments.neuCount) * 100).toFixed(2)} / 100.00 sentiment score
+                      {(sentiments.posCount * 1.0 / (sentiments.posCount + sentiments.negCount) * 100).toFixed(2)} / 100.00 sentiment score
                     </Typography>
                   </Grid>
                 </Grid>
