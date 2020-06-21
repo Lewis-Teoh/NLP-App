@@ -33,6 +33,11 @@ const IndexPage = () => {
   const [reviews, updateReviews] = useState([])
   const [overallRate, setOverallRate] = useState(0.0)
   const [loading, setLoading] = useState(true)
+  const [sentiments, updateSentiments] = useState({
+    posCount: 0,
+    negCount: 0,
+    neuCount: 0,
+  })
 
   const formik = useFormik({
     validateOnBlur: false,
@@ -66,7 +71,7 @@ const IndexPage = () => {
       .get("http://127.0.0.1:5000/reviews")
       .then(response => {
         updateReviews(response.data.reviews)
-        setOverallRate(calcOverallRate(response.data.reviews))
+        calcOverallRate(response.data.reviews)
         setLoading(false)
         console.log(response.data.reviews)
       })
@@ -78,10 +83,38 @@ const IndexPage = () => {
 
   const calcOverallRate = reviews => {
     var total = 0.0
+    var posCount = 0
+    var negCount = 0
+    var neuCount = 0
     reviews.forEach(element => {
       total += element.rating * 1.0
+      switch (element.model_sentiment) {
+        case "pos":
+          posCount += 1
+          break
+        case "neg":
+          negCount += 1
+          break
+        default:
+          neuCount += 1
+          break
+      }
     })
-    return parseFloat(total / reviews.length).toFixed(1)
+    updateSentiments(prev =>
+      Object.assign(prev, { posCount, negCount, neuCount })
+    )
+    setOverallRate(parseFloat(total / reviews.length).toFixed(1))
+  }
+
+  const filterLabel = model_sentiment => {
+    switch (model_sentiment) {
+      case "pos":
+        return "Positive"
+      case "neg":
+        return "Negative"
+      default:
+        return "Neutral"
+    }
   }
 
   useEffect(() => {
@@ -139,10 +172,16 @@ const IndexPage = () => {
           <Card>
             <CardContent>
               <Grid container direction="column" spacing={2}>
-                <Grid item>
-                  <Typography>{overallRate}/5.0</Typography>
-
-                  <Typography>{reviews.length} ratings</Typography>
+                <Grid item container direction="row" justify="space-between">
+                  <Grid item>
+                    <Typography>{overallRate}/5.0</Typography>
+                    <Typography>{reviews.length} ratings</Typography>
+                  </Grid>
+                  <Grid item justify="flex-end">
+                    <Typography>
+                      {(sentiments.posCount * 1.0 / (sentiments.posCount + sentiments.neuCount) * 100).toFixed(2)} / 100.00 sentiment score
+                    </Typography>
+                  </Grid>
                 </Grid>
                 <Grid item>
                   <Divider />
@@ -185,7 +224,12 @@ const IndexPage = () => {
                   {reviews.map((v, i) => {
                     return (
                       <Grid item key={i}>
-                        <Rating value={v.rating} readOnly />
+                        <Grid container justify="space-between">
+                          <Rating value={v.rating} readOnly />
+                          <Typography>
+                            {filterLabel(v.model_sentiment)}
+                          </Typography>
+                        </Grid>
                         <Typography>{v.review}</Typography>
                       </Grid>
                     )
