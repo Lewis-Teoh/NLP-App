@@ -1,48 +1,50 @@
 import datetime
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-from tensorflow.keras.preprocessing.text import Tokenizer as KerasTokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+# from tensorflow.keras.preprocessing.text import Tokenizer as KerasTokenizer
+# from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-from sentence_parser import Parser
+# from sentence_parser import Parser
+
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 CORS(app)
 
 db = SQLAlchemy(app)
-MODEL = tf.keras.models.load_model('cp.h5')
+# MODEL = tf.keras.models.load_model('model.h5')
 
-def analyzerWrapper(review):
-    X_list = []
-    parser_obj = Parser(sent_segmenter=True)
-    parser_obj.sent_to_doc(review)
-    parsed_list = parser_obj.remove_punct()
-    str_ = ""
-    for idx_, list_ in enumerate(parsed_list):
-        str_ += ' '.join(list_)
-        str_ += ' '
-    X_list.append(str_)
+# def analyzerWrapper(review):
+#     X_list = []
+#     parser_obj = Parser(sent_segmenter=True)
+#     parser_obj.sent_to_doc(review)
+#     parsed_list = parser_obj.remove_punct()
+#     str_ = ""
+#     for idx_, list_ in enumerate(parsed_list):
+#         str_ += ' '.join(list_)
+#         str_ += ' '
+#     X_list.append(str_)
     
-    X_copy = X_list.copy() 
-    tk = KerasTokenizer(lower = True)
-    tk.fit_on_texts(X_copy)
-    X_seq = tk.texts_to_sequences(X_copy)
-    X_pad = pad_sequences(X_seq, maxlen=200, padding='post')
+#     X_copy = X_list.copy() 
+#     tk = KerasTokenizer(lower = True)
+#     tk.fit_on_texts(X_copy)
+#     X_seq = tk.texts_to_sequences(X_copy)
+#     X_pad = pad_sequences(X_seq, maxlen=200, padding='post')
 
-    pred = MODEL.predict(X_pad, verbose=1)
-    y_pred = np.argmax(pred,axis=-1)[0] # 0=pos , 1=neu, 2=neg according to training model format
-    mapping = {
-        0:'pos',
-        1:'neu',
-        2:'neg',
-    }
-    label = mapping[y_pred]
-    return label
+#     pred = MODEL.predict(X_pad, verbose=1)
+#     y_pred = np.argmax(pred,axis=-1)[0] # 0=pos , 1=neu, 2=neg according to training model format
+#     mapping = {
+#         0:'pos',
+#         # 1:'neu',
+#         1:'neg',
+#     }
+#     label = mapping[y_pred]
+#     return label
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,13 +53,24 @@ class Review(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     model_sentiment = db.Column(db.String(10))
 
+def sentiment_wrapper(sentence):
+    analyzer = SentimentIntensityAnalyzer()
+    vs = analyzer.polarity_scores(sentence)
+    compount = vs['compound']
+    if compount >= 0.05:
+        return 'pos'
+    elif compount > -0.05 and compount < 0.05:
+        return 'neu'
+    elif compount <= -0.05:
+        return 'neg'
 
 @app.route('/add_review', methods=['POST'])
 def add_review():
     review_data = request.get_json()
     
     try:
-        label = analyzerWrapper(review_data['review'])
+        label = sentiment_wrapper(review_data['review'])
+        # label = analyzerWrapper(review_data['review'])
     except Exception as e:
         print(f"Failed to do prediction > {str(e)}")
         label = None
